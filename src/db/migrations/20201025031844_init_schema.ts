@@ -1,7 +1,6 @@
 import * as Knex from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
-  console.log(',kz');
   return knex.schema
     .createTable('client', table => {
       table.increments('client_id');
@@ -49,9 +48,9 @@ export async function up(knex: Knex): Promise<void> {
 
 export async function down(knex: Knex): Promise<void> {
   return knex.schema
+    .dropTable('order')
     .dropTable('client')
     .dropTable('driver')
     .dropTable('point')
-    .dropTable('status')
-    .dropTable('order');
+    .dropTable('status');
 }
