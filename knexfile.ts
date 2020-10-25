@@ -7,7 +7,6 @@ export default {
     user: process.env.METAXI_DATABASE_USER,
     password: process.env.METAXI_DATABASE_PASSWORD,
     database: 'metaxi',
-    git,
   },
   migrations: {
     directory: __dirname + '/src/db/migrations',
