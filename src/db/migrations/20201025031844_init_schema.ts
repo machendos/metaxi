@@ -1,47 +1,55 @@
 import * as Knex from 'knex';
+import { DriverStatuses } from './../enums';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema
     .createTable('client', table => {
-      table.increments('client_id');
-      table.string('client_name');
+      table.increments('clientId');
+      table.string('clientName');
     })
     .createTable('driver', table => {
-      table.increments('driver_id');
-      table.string('driver_name');
+      table.increments('driverId');
+      table.string('driverName');
+      table
+        .enum('status', [
+          DriverStatuses.Free,
+          DriverStatuses.FulfillsOrder,
+          DriverStatuses.TookOrder,
+        ])
+        .defaultTo(DriverStatuses.Free);
     })
     .createTable('point', table => {
-      table.increments('point_id');
-      table.string('point_title');
+      table.increments('pointId');
+      table.string('pointTitle');
     })
     .createTable('status', table => {
-      table.increments('status_id');
-      table.string('status_title');
+      table.increments('statusId');
+      table.string('statusTitle');
     })
     .createTable('order', table => {
-      table.increments('order_id');
+      table.increments('orderId');
       table
-        .integer('client_id')
-        .references('client_id')
+        .integer('clientId')
+        .references('clientId')
         .inTable('client');
       table
-        .integer('driver_id')
-        .references('driver_id')
+        .integer('driverId')
+        .references('driverId')
         .inTable('driver');
       table
-        .integer('from_point_id')
-        .references('point_id')
+        .integer('fromPointId')
+        .references('pointPd')
         .inTable('point');
       table
-        .integer('to_point_id')
-        .references('point_id')
+        .integer('toPointId')
+        .references('pointId')
         .inTable('point');
-      table.timestamp('order_start_time');
+      table.timestamp('orderStartTime');
       table.timestamp('duration');
       table.float('cost');
       table
-        .integer('status_id')
-        .references('status_id')
+        .integer('statusId')
+        .references('statusId')
         .inTable('status');
     });
 }
