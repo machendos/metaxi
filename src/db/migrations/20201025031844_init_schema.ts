@@ -38,7 +38,7 @@ export async function up(knex: Knex): Promise<void> {
         .inTable('driver');
       table
         .integer('fromPointId')
-        .references('pointPd')
+        .references('pointId')
         .inTable('point');
       table
         .integer('toPointId')
