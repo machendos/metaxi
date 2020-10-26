@@ -1,4 +1,4 @@
 import config from '../../knexfile';
-import knex from 'knex';
+import * as knex from 'knex';
 
 export default knex(config);
