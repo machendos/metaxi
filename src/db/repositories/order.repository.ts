@@ -1,5 +1,5 @@
 import knex from '.././knex';
-import { ClientStatuses, DriverStatuses } from './../enums';
+import { ClientStatuses, DriverStatuses, OrderStatuses } from './../enums';
 import { Client, Driver } from './../../modules/orders/dto';
 import { Injectable } from '@nestjs/common';
 
@@ -65,5 +65,30 @@ export class OrdersRepository {
       .where({ driverId })
       .update({ status: DriverStatuses.Free })
       .then(() => true);
+  }
+
+  createOrder(
+    driverId: number,
+    fromPointId: number,
+    toPointId: number,
+    orderStartTime: Date,
+    clientId: number,
+    duration: Date = null,
+    cost: number = null,
+    status: OrderStatuses = OrderStatuses.New,
+  ) {
+    return knex('order')
+      .insert({
+        driverId,
+        fromPointId,
+        toPointId,
+        orderStartTime,
+        duration,
+        cost,
+        status,
+        clientId,
+      })
+      .returning('orderId')
+      .then(orderId => orderId[0]);
   }
 }

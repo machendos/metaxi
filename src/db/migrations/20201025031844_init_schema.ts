@@ -50,7 +50,7 @@ export async function up(knex: Knex): Promise<void> {
       table.timestamp('orderStartTime');
       table.timestamp('duration');
       table.float('cost');
-      table.enum('statusId', [
+      table.enum('status', [
         OrderStatuses.New,
         OrderStatuses.InProgress,
         OrderStatuses.Canceled,
