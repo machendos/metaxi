@@ -3,3 +3,9 @@ export enum DriverStatuses {
   TookOrder = 'tookOrder',
   FulfillsOrder = 'fulfillsOrder',
 }
+
+export enum ClientStatuses {
+  Free = 'free',
+  WaitForDriver = 'waitForDriver',
+  InTheCar = 'inTheCar',
+}

@@ -1,11 +1,18 @@
 import * as Knex from 'knex';
-import { DriverStatuses } from './../enums';
+import { ClientStatuses, DriverStatuses } from './../enums';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema
     .createTable('client', table => {
       table.increments('clientId');
       table.string('clientName');
+      table
+        .enum('status', [
+          ClientStatuses.Free,
+          ClientStatuses.WaitForDriver,
+          ClientStatuses.InTheCar,
+        ])
+        .defaultTo(DriverStatuses.Free);
     })
     .createTable('driver', table => {
       table.increments('driverId');
