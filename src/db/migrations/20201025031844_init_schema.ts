@@ -1,5 +1,5 @@
 import * as Knex from 'knex';
-import { ClientStatuses, DriverStatuses } from './../enums';
+import { ClientStatuses, DriverStatuses, OrderStatuses } from './../enums';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema
@@ -29,10 +29,6 @@ export async function up(knex: Knex): Promise<void> {
       table.increments('pointId');
       table.string('pointTitle');
     })
-    .createTable('status', table => {
-      table.increments('statusId');
-      table.string('statusTitle');
-    })
     .createTable('order', table => {
       table.increments('orderId');
       table
@@ -54,10 +50,13 @@ export async function up(knex: Knex): Promise<void> {
       table.timestamp('orderStartTime');
       table.timestamp('duration');
       table.float('cost');
-      table
-        .integer('statusId')
-        .references('statusId')
-        .inTable('status');
+      table.enum('statusId', [
+        OrderStatuses.New,
+        OrderStatuses.InProgress,
+        OrderStatuses.Canceled,
+        OrderStatuses.Finished,
+      ]);
+      table.text('cancellReason').defaultTo(null);
     });
 }
 
@@ -66,6 +65,5 @@ export async function down(knex: Knex): Promise<void> {
     .dropTable('order')
     .dropTable('client')
     .dropTable('driver')
-    .dropTable('point')
-    .dropTable('status');
+    .dropTable('point');
 }

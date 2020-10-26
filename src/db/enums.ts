@@ -9,3 +9,10 @@ export enum ClientStatuses {
   WaitForDriver = 'waitForDriver',
   InTheCar = 'inTheCar',
 }
+
+export enum OrderStatuses {
+  New = 'new',
+  InProgress = 'inProgress',
+  Canceled = 'canceled',
+  Finished = 'finished',
+}
