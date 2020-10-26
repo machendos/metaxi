@@ -1,5 +1,9 @@
 import * as Knex from 'knex';
-import { ClientStatuses, DriverStatuses, OrderStatuses } from './../enums';
+import {
+  ClientStatuses,
+  DriverStatuses,
+  OrderStatuses,
+} from '../../helpers/enums';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema

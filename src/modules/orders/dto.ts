@@ -1,5 +1,5 @@
 import { IsInt, Min } from 'class-validator';
-import { ClientStatuses, DriverStatuses } from './../../db/enums';
+import { ClientStatuses, DriverStatuses } from '../../helpers/enums';
 
 export class Order {
   @IsInt()

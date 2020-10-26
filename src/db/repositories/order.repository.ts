@@ -1,5 +1,9 @@
 import knex from '.././knex';
-import { ClientStatuses, DriverStatuses, OrderStatuses } from './../enums';
+import {
+  ClientStatuses,
+  DriverStatuses,
+  OrderStatuses,
+} from '../../helpers/enums';
 import { Client, Driver } from './../../modules/orders/dto';
 import { Injectable } from '@nestjs/common';
 

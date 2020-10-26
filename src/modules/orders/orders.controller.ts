@@ -3,7 +3,7 @@ import { CreatedOrder, MetaxiError, Order } from './dto';
 import { errors, createError } from './../../helpers/errors';
 import { validate } from 'class-validator';
 import { OrdersRepository } from '../../db/repositories/order.repository';
-import { ClientStatuses } from 'src/db/enums';
+import { ClientStatuses } from 'src/helpers/enums';
 
 @Controller('order')
 export class OrdersController {
