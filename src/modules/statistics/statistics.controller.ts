@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 
-@Controller()
+@Controller('statistics')
 export class StatisticsController {
   @Get()
   getOrders(): string {

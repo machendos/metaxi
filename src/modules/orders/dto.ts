@@ -1,4 +1,5 @@
-import { DriverStatuses } from './../../db/enums';
+import { IsInt, Min } from 'class-validator';
+import { ClientStatuses, DriverStatuses } from './../../db/enums';
 
 export class Order {
   @IsInt()
@@ -26,16 +27,26 @@ export class CreatedOrder {
 export class MetaxiError {
   public error: boolean;
   constructor(
-    public clientId: number,
-    public fromId: number,
-    public toId: number,
-  ) {}
+    public reason: string,
+    public code: number,
+    public description: string,
+  ) {
+    this.error = true;
+  }
 }
 
 export class Driver {
   constructor(
     public driverId: number,
-    public driverName: number,
+    public driverName: string,
     public status: DriverStatuses,
+  ) {}
+}
+
+export class Client {
+  constructor(
+    public clientId: number,
+    public clientName: string,
+    public status: ClientStatuses,
   ) {}
 }

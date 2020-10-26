@@ -1,5 +1,5 @@
 import * as util from 'util';
-import { MetaxiError } from './dto';
+import { MetaxiError } from './../modules/orders/dto';
 
 export enum errors {
   InvalidAPIData,
