@@ -8,21 +8,21 @@ export class StatisticsRepository {
     return knex('order')
       .where({ driverId, status: OrderStatuses.Finished })
       .count()
-      .then(data => ({ driverId, ordersCount: data[0].count }));
+      .then(data => parseInt(data[0].count.toString()));
   }
   averageRoadTime(driverId: string) {
     return knex('order')
       .where({ driverId, status: OrderStatuses.Finished })
       .avg('duration')
-      .then(data => ({ driverId, averageRoadTime: data[0].avg }));
+      .then(data => data[0].avg);
   }
   sumCost(driverId: string) {
     return knex('order')
       .where({ driverId, status: OrderStatuses.Finished })
       .sum('cost')
-      .then(data => ({ driverId, totalCost: data[0].sum }));
+      .then(data => data[0].sum);
   }
-  mostFrequentDestination(driverId: string) {
+  mostFrequentDest(driverId: string) {
     return knex.transaction(async trx => {
       const { toPointId, count } = await trx('order')
         .select('toPointId', knex.raw('count("toPointId")'))
@@ -35,9 +35,8 @@ export class StatisticsRepository {
         .select('pointTitle')
         .where({ pointId: toPointId })
         .then(points => ({
-          driverId,
-          toPointId,
           count,
+          toPointId,
           pointTitle: points[0].pointTitle,
         }));
     });
