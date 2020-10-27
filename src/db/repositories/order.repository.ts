@@ -4,8 +4,15 @@ import {
   DriverStatuses,
   OrderStatuses,
 } from '../../helpers/enums';
-import { Client, Driver } from './../../modules/orders/dto';
+import {
+  ChangeOrderStatusResult,
+  Client,
+  Driver,
+  NewOrder,
+} from './../../modules/orders/dto';
 import { Injectable } from '@nestjs/common';
+
+const MILISECONDS_IN_SECOND = 1000;
 
 @Injectable()
 export class OrdersRepository {
@@ -71,12 +78,19 @@ export class OrdersRepository {
       .then(() => true);
   }
 
+  freeClient(clientId: number): Promise<boolean> {
+    return knex('client')
+      .where({ clientId })
+      .update({ status: ClientStatuses.Free })
+      .then(() => true);
+  }
+
   createOrder(
     driverId: number,
     fromPointId: number,
     toPointId: number,
-    orderStartTime: Date,
     clientId: number,
+    orderStartTime: Date = null,
     duration: Date = null,
     cost: number = null,
     status: OrderStatuses = OrderStatuses.New,
@@ -94,5 +108,64 @@ export class OrdersRepository {
       })
       .returning('orderId')
       .then(orderId => orderId[0]);
+  }
+
+  checkAndChangeOrderStatus(
+    orderId: number,
+    expectedOldStatus: OrderStatuses,
+    newStatus: OrderStatuses,
+  ): Promise<ChangeOrderStatusResult> {
+    return knex.transaction(trx =>
+      trx
+        .from('order')
+        .select('orderId', 'status', 'driverId', 'orderId', 'clientId')
+        .where({ orderId })
+        .then(orders => {
+          if (!orders.length) return { order: false };
+          const oldStatus = orders[0].status as OrderStatuses;
+          if (oldStatus === expectedOldStatus) {
+            return trx('order')
+              .where({ orderId })
+              .update({ status: newStatus })
+              .then(() => ({
+                order: true,
+                done: true,
+                oldStatus,
+                driverId: orders[0].driverId,
+                orderId: orders[0].orderId,
+                clientId: orders[0].clientId,
+              }));
+          }
+          return { order: true, done: false, oldStatus };
+        }),
+    );
+  }
+
+  setOrderStartTime(orderId: number, orderStartTime: Date) {
+    return knex('order')
+      .where({ orderId })
+      .update({ orderStartTime });
+  }
+
+  setOrderDuration(orderId: number, orderFinishTime: Date): Promise<number> {
+    return knex.transaction(trx =>
+      trx('order')
+        .where({ orderId })
+        .select('orderStartTime')
+        .then(orders => orders[0].orderStartTime)
+        .then(orderStartTime => {
+          const duration = orderFinishTime.getTime() - orderStartTime.getTime();
+          return trx('order')
+            .where({ orderId })
+            .update({ duration: new Date(duration) })
+            .then(() => duration / MILISECONDS_IN_SECOND);
+        }),
+    );
+  }
+
+  setOrderCost(orderId: number, cost: number) {
+    return knex('order')
+      .where({ orderId })
+      .update({ cost });
   }
 }
