@@ -8,6 +8,8 @@ export enum errors {
   ClientNotFound,
   ClientAlreadyMadeOrder,
   NoFreeDrivers,
+  OrderNotFound,
+  WrongStatus,
 }
 
 const errorsDetails = {
@@ -43,6 +45,17 @@ const errorsDetails = {
     reason: 'There are no free drivers now',
     code: 5,
     description: 'There are no free drivers now. Please, wait',
+  },
+  [errors.OrderNotFound]: {
+    reason: 'Order not found',
+    code: 5,
+    description: 'Order with ID=%s not found in DB. Plese create it before',
+  },
+  [errors.WrongStatus]: {
+    reason: 'The order has an invalid status for this operation',
+    code: 5,
+    description: `For set the order status to %s, it must have a status %s, but
+    now orders status is %s. So you cant do this operation with this order now`,
   },
 };
 
