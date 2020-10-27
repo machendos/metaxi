@@ -59,7 +59,6 @@ export class OrdersRepository {
         .then(clients => {
           if (clients.length) {
             const client = clients[0];
-            console.log(client);
             if (client.status !== ClientStatuses.Free) return false;
             return trx('client')
               .where({ clientId })
