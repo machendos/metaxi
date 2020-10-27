@@ -1,5 +1,5 @@
 import * as request from 'supertest';
-import initDBAndFeelByFixtures from '../src/db/ss';
+import initDBAndFeelByFixtures from '../src/db/init.db.with.fixtures';
 import * as knex from '../src/db/knex';
 
 const APP_URL = 'http://localhost:3000';
@@ -31,10 +31,10 @@ describe('Get statistics (e2e)', () => {
       // drivers will have 3 orders.Other will have 2 orders
       await request(APP_URL)
         .get('/statistics/count/1')
-        .expect({ driverId: '1', ordersCount: '3' });
+        .expect({ driverId: 1, ordersCount: 3 });
       return request(APP_URL)
         .get('/statistics/count/3')
-        .expect({ driverId: '3', ordersCount: '2' });
+        .expect({ driverId: 3, ordersCount: 2 });
     });
   });
 
@@ -60,7 +60,7 @@ describe('Get statistics (e2e)', () => {
       return request(APP_URL)
         .get('/statistics/averageTime/1')
         .expect({
-          driverId: '1',
+          driverId: 1,
           averageRoadTime: {
             milliseconds:
               Math.round(
@@ -114,9 +114,9 @@ describe('Get statistics (e2e)', () => {
         '/statistics/frequentDestination/1',
       );
       return expect(result.body).toEqual({
-        driverId: '1',
+        driverId: 1,
         toPointId: 7,
-        count: '3',
+        count: 3,
         pointTitle: '19-a, Petra Zaporozhtsia Street',
       });
     });
