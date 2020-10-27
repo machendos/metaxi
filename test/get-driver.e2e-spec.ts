@@ -1,5 +1,5 @@
 import * as request from 'supertest';
-import initDBAndFeelByFixtures from '../src/db/ss';
+import initDBAndFeelByFixtures from '../src/db/init.db.with.fixtures';
 import * as knex from '../src/db/knex';
 
 const APP_URL = 'http://localhost:3000';
