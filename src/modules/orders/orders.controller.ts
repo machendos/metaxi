@@ -3,29 +3,14 @@ import { CreatedOrder, MetaxiError, Order } from './dto';
 import { errors, createError } from './../../helpers/errors';
 import { validate } from 'class-validator';
 import { OrdersRepository } from '../../db/repositories/order.repository';
-import { ClientStatuses } from 'src/helpers/enums';
+import validatorAPI from '../../helpers/validator';
 
 @Controller('order')
 export class OrdersController {
   constructor(private ordersRepository: OrdersRepository) {}
   @Post()
   async createOrder(@Body() body): Promise<CreatedOrder | MetaxiError> {
-    const order = new Order(
-      parseInt(body.clientId),
-      parseInt(body.fromId),
-      parseInt(body.toId),
-    );
-    return await validate(order)
-      .then(validationErrors => {
-        if (validationErrors.length) {
-          throw createError(
-            errors.InvalidAPIData,
-            validationErrors
-              .map(error => Object.values(error.constraints))
-              .flat(),
-          );
-        }
-      })
+    return await validatorAPI(order)
       .then(() => this.ordersRepository.checkPoint(order.fromId))
       .then(pointFinded => {
         if (!pointFinded)
