@@ -52,7 +52,7 @@ export async function up(knex: Knex): Promise<void> {
         .references('pointId')
         .inTable('point');
       table.timestamp('orderStartTime');
-      table.timestamp('duration');
+      table.specificType('duration', 'interval');
       table.float('cost');
       table.enum('status', [
         OrderStatuses.New,

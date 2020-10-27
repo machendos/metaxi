@@ -8,7 +8,6 @@ import {
   ChangeOrderStatusResult,
   Client,
   Driver,
-  NewOrder,
 } from './../../modules/orders/dto';
 import { Injectable } from '@nestjs/common';
 
@@ -157,7 +156,7 @@ export class OrdersRepository {
           const duration = orderFinishTime.getTime() - orderStartTime.getTime();
           return trx('order')
             .where({ orderId })
-            .update({ duration: new Date(duration) })
+            .update({ duration: duration + ' milliseconds' })
             .then(() => duration / MILISECONDS_IN_SECOND);
         }),
     );
