@@ -1,19 +1,38 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { CreatedOrder, MetaxiError, NewOrder, OrderId } from './dto';
+import { Controller, Post, Body, Res, HttpException } from '@nestjs/common';
+import {
+  CreatedOrder,
+  FinishedOrder,
+  MetaxiError,
+  NewOrder,
+  OrderId,
+  StartedOrder,
+} from './dto';
 import { errors, createError } from './../../helpers/errors';
 import { OrdersRepository } from '../../db/repositories/order.repository';
 import { ClientStatuses, OrderStatuses } from '../../../src/helpers/enums';
 import validatorAPI from '../../helpers/validator';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
 const ONE_SECOND_PRICE = 0.01;
 
+@ApiTags('orders-manipulation')
 @Controller('order')
 export class OrdersController {
   constructor(private ordersRepository: OrdersRepository) {}
   @Post()
-  async createOrder(@Body() body): Promise<CreatedOrder | MetaxiError> {
+  @ApiBody({ type: NewOrder })
+  @ApiResponse({
+    status: 200,
+    type: CreatedOrder,
+  })
+  @ApiResponse({
+    status: 400,
+    type: MetaxiError,
+  })
+  async createOrder(@Body() body, @Res() res: Response) {
     const order = new NewOrder(body.clientId, body.fromId, body.toId);
-    return await validatorAPI(order)
+    await validatorAPI(order)
       .then(() => this.ordersRepository.checkPoint(order.fromId))
       .then(pointFinded => {
         if (!pointFinded)
@@ -28,7 +47,6 @@ export class OrdersController {
       .then(clientFinded => {
         if (!clientFinded)
           throw createError(errors.ClientNotFound, order.clientId);
-        console.log(clientFinded);
         if (clientFinded.status !== ClientStatuses.Free)
           throw createError(errors.ClientAlreadyMadeOrder, order.clientId);
       })
@@ -52,14 +70,25 @@ export class OrdersController {
                 order.toId,
                 order.clientId,
               )
-              .then(orderId => new CreatedOrder(orderId, driver.driverId)),
+              .then(orderId =>
+                res.json(new CreatedOrder(orderId, driver.driverId)),
+              ),
           );
       })
-      .catch(error => error);
+      .catch(error => res.status(400).json(error));
   }
 
   @Post('start')
-  async startOrder(@Body() body) {
+  @ApiBody({ type: OrderId })
+  @ApiResponse({
+    status: 200,
+    type: StartedOrder,
+  })
+  @ApiResponse({
+    status: 400,
+    type: MetaxiError,
+  })
+  async startOrder(@Body() body, @Res() res: Response) {
     const orderId = new OrderId(parseInt(body.orderId));
     return await validatorAPI(orderId)
       .then(() =>
@@ -82,13 +111,22 @@ export class OrdersController {
         const orderStartTime = new Date();
         return this.ordersRepository
           .setOrderStartTime(orderId.orderId, orderStartTime)
-          .then(() => ({ orderStartTime }));
+          .then(() => res.json(new StartedOrder(orderStartTime)));
       })
-      .catch(error => error);
+      .catch(error => res.status(400).json(error));
   }
 
   @Post('finish')
-  async finishOrder(@Body() body) {
+  @ApiBody({ type: OrderId })
+  @ApiResponse({
+    status: 200,
+    type: FinishedOrder,
+  })
+  @ApiResponse({
+    status: 400,
+    type: MetaxiError,
+  })
+  async finishOrder(@Body() body, @Res() res: Response) {
     const orderId = new OrderId(parseInt(body.orderId));
     return await validatorAPI(orderId)
       .then(() =>
@@ -123,12 +161,9 @@ export class OrdersController {
             const cost = duration * ONE_SECOND_PRICE;
             return this.ordersRepository
               .setOrderCost(orderId.orderId, cost)
-              .then(() => ({
-                cost,
-                orderFinishTime,
-              }));
+              .then(() => res.json(new FinishedOrder(orderFinishTime, cost)));
           });
       })
-      .catch(error => error);
+      .catch(error => res.status(400).json(error));
   }
 }
