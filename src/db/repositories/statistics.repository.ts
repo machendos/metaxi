@@ -4,25 +4,25 @@ import { OrderStatuses } from '../../../src/helpers/enums';
 
 @Injectable()
 export class StatisticsRepository {
-  ordersCount(driverId: number) {
+  ordersCount(driverId: string) {
     return knex('order')
       .where({ driverId, status: OrderStatuses.Finished })
       .count()
       .then(data => ({ driverId, ordersCount: data[0].count }));
   }
-  averageRoadTime(driverId: number) {
+  averageRoadTime(driverId: string) {
     return knex('order')
       .where({ driverId, status: OrderStatuses.Finished })
       .avg('duration')
       .then(data => ({ driverId, averageRoadTime: data[0].avg }));
   }
-  sumCost(driverId: number) {
+  sumCost(driverId: string) {
     return knex('order')
       .where({ driverId, status: OrderStatuses.Finished })
       .sum('cost')
       .then(data => ({ driverId, totalCost: data[0].sum }));
   }
-  mostFrequentDestination(driverId: number) {
+  mostFrequentDestination(driverId: string) {
     return knex.transaction(async trx => {
       const { toPointId, count } = await trx('order')
         .select('toPointId', knex.raw('count("toPointId")'))
@@ -42,7 +42,7 @@ export class StatisticsRepository {
         }));
     });
   }
-  checkDriver(driverId: number): Promise<boolean> {
+  checkDriver(driverId: string): Promise<boolean> {
     return knex
       .from('driver')
       .select('driverId')

@@ -4,7 +4,9 @@ export class DriverId {
   @IsInt()
   @Min(0)
   driverId: number;
-  constructor(driverId: number) {
-    this.driverId = driverId;
+  constructor(driverId: string) {
+    console.log(parseInt(driverId) + 3);
+    this.driverId = parseInt(driverId);
+    console.log(this);
   }
 }
