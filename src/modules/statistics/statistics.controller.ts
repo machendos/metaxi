@@ -1,7 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { StatisticsRepository } from 'src/db/repositories/statistics.repository';
-import { createError, errors } from 'src/helpers/errors';
-// import validatorAPI from '../../helpers/validator';
+import { StatisticsRepository } from '../../../src/db/repositories/statistics.repository';
+import { createError, errors } from '../../../src/helpers/errors';
 import { DriverId } from './dto';
 
 @Controller('statistics')

@@ -2,7 +2,7 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { CreatedOrder, MetaxiError, NewOrder, OrderId } from './dto';
 import { errors, createError } from './../../helpers/errors';
 import { OrdersRepository } from '../../db/repositories/order.repository';
-import { ClientStatuses, OrderStatuses } from 'src/helpers/enums';
+import { ClientStatuses, OrderStatuses } from '../../../src/helpers/enums';
 import validatorAPI from '../../helpers/validator';
 
 const ONE_SECOND_PRICE = 0.01;

@@ -1,10 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
 import initDBAndFeelByFixtures from '../src/db/ss';
 import * as knex from '../src/db/knex';
-import { start } from 'repl';
 
 const APP_URL = 'http://localhost:3000';
 

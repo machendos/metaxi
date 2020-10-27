@@ -1,6 +1,6 @@
 import knex from '.././knex';
 import { Injectable } from '@nestjs/common';
-import { OrderStatuses } from 'src/helpers/enums';
+import { OrderStatuses } from '../../../src/helpers/enums';
 
 @Injectable()
 export class StatisticsRepository {
