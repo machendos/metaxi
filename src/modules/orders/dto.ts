@@ -1,7 +1,11 @@
 import { IsInt, Min } from 'class-validator';
-import { ClientStatuses, DriverStatuses } from '../../helpers/enums';
+import {
+  ClientStatuses,
+  DriverStatuses,
+  OrderStatuses,
+} from '../../helpers/enums';
 
-export class Order {
+export class NewOrder {
   @IsInt()
   @Min(0)
   clientId: number;
@@ -13,10 +17,19 @@ export class Order {
   @IsInt()
   @Min(0)
   toId: number;
-  constructor(clientId: number, fromId: number, toId: number) {
-    this.clientId = clientId;
-    this.fromId = fromId;
-    this.toId = toId;
+  constructor(clientId: string, fromId: string, toId: string) {
+    this.clientId = parseInt(clientId);
+    this.fromId = parseInt(fromId);
+    this.toId = parseInt(toId);
+  }
+}
+
+export class OrderId {
+  @IsInt()
+  @Min(0)
+  orderId: number;
+  constructor(orderId: number) {
+    this.orderId = orderId;
   }
 }
 
@@ -48,5 +61,16 @@ export class Client {
     public clientId: number,
     public clientName: string,
     public status: ClientStatuses,
+  ) {}
+}
+
+export class ChangeOrderStatusResult {
+  constructor(
+    public order: boolean,
+    public done?: boolean,
+    public oldStatus?: OrderStatuses,
+    public driverId?: number,
+    public clientId?: number,
+    public orderId?: number,
   ) {}
 }
